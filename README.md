@@ -26,7 +26,7 @@ Remember when you could play games without installing 50GB of "HD textures"? We'
 pnpm install    # Dependencies go brrr
 pnpm start      # localhost:3000 || die
 pnpm build      # Compile like it's 1999
-pnpm serve      # Share with the world
+pnpm serve      # Share your localhost url with the world
 ```
 
 ## 🧪 Testing (Because We're Professionals™)
