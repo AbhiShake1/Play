@@ -4,7 +4,7 @@ import {
   createFileRoute,
   useLocation,
 } from "@tanstack/solid-router";
-import { onMount } from "solid-js";
+import { createEffect } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { createFullscreen } from "~/lib/fullscreen";
 
@@ -18,9 +18,9 @@ function RouteComponent() {
 		location().pathname.split("/").pop()?.toUpperCase() || "GAMES";
 	const [isFullScreen, , toggleFullscreen] = createFullscreen();
 
-	onMount(() => {
+	createEffect(() => {
 		if (!isFullScreen()) toggleFullscreen({ saveToLocal: false });
-	});
+	}, [isFullScreen]);
 
 	return (
 		<div class="min-h-screen bg-black text-white">
