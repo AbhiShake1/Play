@@ -2,11 +2,9 @@ import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount } from "solid-js";
 import { Button } from "~/components/ui/button";
 import { ControlTutorial } from "~/components/ui/control-tutorial";
-import {
-	ExitFullscreenIcon,
-	FullscreenIcon,
-} from "~/components/ui/icons";
+import { ExitFullscreenIcon, FullscreenIcon } from "~/components/ui/icons";
 import { GamePreview } from "~/components/ui/preview";
+import { createFullscreen } from "~/lib/fullscreen";
 import { games } from "~/lib/games";
 
 export const Route = createFileRoute("/")({
@@ -17,19 +15,16 @@ function App() {
 	const [searchOpen, setSearchOpen] = createSignal(false);
 	const [searchQuery, setSearchQuery] = createSignal("");
 	const [controlTutorialOpen, setControlTutorialOpen] = createSignal(false);
-	const [isFullscreen, setIsFullscreen] = createSignal(false);
+	const [isFullscreen, setIsFullscreen, toggleFullscreen] = createFullscreen();
 
-	const toggleFullscreen = () => {
-		if (!document.fullscreenElement) {
-			document.documentElement.requestFullscreen();
-			setIsFullscreen(true);
-		} else {
+	onMount(() => {
+		// Restore fullscreen state from local storage
+		const savedFullscreen = localStorage.getItem("isFullscreen") === "true";
+		if (!savedFullscreen && document.fullscreenElement) {
 			document.exitFullscreen();
 			setIsFullscreen(false);
 		}
-	};
 
-	onMount(() => {
 		// Handle '/' key for search and 'F' for fullscreen
 		const handleKeyPress = (e: KeyboardEvent) => {
 			if (e.key === "/" && !searchOpen()) {
@@ -67,7 +62,7 @@ function App() {
 					<div class="flex gap-4">
 						<Button
 							variant="ghost"
-							onClick={toggleFullscreen}
+							onClick={() => toggleFullscreen()}
 							class="flex items-center gap-2 backdrop-blur-md bg-white/5 hover:bg-orange-500/20 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(255,69,0,0.4)] rounded-xl"
 						>
 							{isFullscreen() ? <ExitFullscreenIcon /> : <FullscreenIcon />}

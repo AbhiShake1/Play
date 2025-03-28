@@ -26,8 +26,15 @@ function RouteComponent() {
 		const container = document.querySelector('.game-container');
 		if (!container) return;
 
-		const containerWidth = container.clientWidth;
-		const containerHeight = container.clientHeight;
+		let containerWidth = container.clientWidth;
+		let containerHeight = container.clientHeight;
+		
+		// swap
+		if (containerWidth < containerHeight) {
+			containerWidth += containerHeight
+			containerHeight = containerWidth - containerHeight
+			containerWidth = containerWidth - containerHeight
+		}
 
 		// Calculate cell size based on container dimensions
 		const maxCellsX = Math.floor(containerWidth / MIN_CELL_SIZE);
@@ -68,6 +75,7 @@ function RouteComponent() {
 	const generateFood = () => {
 		let newFood!: { x: number; y: number };
 		const currentSnake = snake();
+		const currentObstacles = obstacles();
 
 		do {
 			newFood = {
@@ -77,6 +85,9 @@ function RouteComponent() {
 		} while (
 			currentSnake.some(
 				(segment) => segment.x === newFood.x && segment.y === newFood.y,
+			) ||
+			currentObstacles.some(
+				(obstacle) => obstacle.x === newFood.x && obstacle.y === newFood.y
 			)
 		);
 
@@ -210,7 +221,7 @@ function RouteComponent() {
 	});
 
 	return (
-		<div class="flex flex-col items-center justify-center min-h-screen bg-[#0a0c0f] text-white">
+		<div class="flex flex-col items-center justify-center h-[80vh] bg-[#0a0c0f] text-white">
 			<div class="mb-4 space-y-2 text-center">
 				<div class="text-2xl font-bold">Score: {score()}</div>
 				{isColliding() && (
@@ -220,7 +231,7 @@ function RouteComponent() {
 				)}
 			</div>
 			<div
-				class="aspect-square game-container relative border-2 border-orange-500/50 rounded-lg overflow-hidden bg-[#0f1214] before:content-[''] before:absolute before:inset-0 before:bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#1a1f2340_2px,#1a1f2340_4px)] before:opacity-20 before:animate-[grass-pattern_20s_linear_infinite] after:content-[''] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_50%,transparent_0%,#0f1214_100%)] after:opacity-50 shadow-[inset_0_0_50px_rgba(0,0,0,0.5),0_0_30px_rgba(255,69,0,0.2)] w-[min(65vh,600px)] h-[min(65vh,600px)]"
+				class="aspect-square game-container relative border-2 border-orange-500/50 rounded-lg overflow-hidden bg-[#0f1214] before:content-[''] before:absolute before:inset-0 before:bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#1a1f2340_2px,#1a1f2340_4px)] before:opacity-20 before:animate-[grass-pattern_20s_linear_infinite] after:content-[''] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_50%,transparent_0%,#0f1214_100%)] after:opacity-50 shadow-[inset_0_0_50px_rgba(0,0,0,0.5),0_0_30px_rgba(255,69,0,0.2)] w-[min(65vh,400px)] h-[min(65vh,400px)]"
 			>
 				{/* Render obstacles */}
 				{obstacles().map((obstacle) => (

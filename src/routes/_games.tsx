@@ -1,5 +1,12 @@
-import { Link, Outlet, createFileRoute, useLocation } from "@tanstack/solid-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useLocation,
+} from "@tanstack/solid-router";
+import { createRenderEffect } from "solid-js";
 import { Button } from "~/components/ui/button";
+import { createFullscreen } from "~/lib/fullscreen";
 
 export const Route = createFileRoute("/_games")({
 	component: RouteComponent,
@@ -7,7 +14,13 @@ export const Route = createFileRoute("/_games")({
 
 function RouteComponent() {
 	const location = useLocation();
-	const currentRoute = location().pathname.split("/").pop()?.toUpperCase() || "GAMES";
+	const currentRoute =
+		location().pathname.split("/").pop()?.toUpperCase() || "GAMES";
+	const [isFullScreen, , toggleFullscreen] = createFullscreen();
+
+	createRenderEffect(() => {
+		if (!isFullScreen()) toggleFullscreen({ saveToLocal: false });
+	});
 
 	return (
 		<div class="min-h-screen bg-black text-white">
