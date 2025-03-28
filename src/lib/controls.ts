@@ -44,28 +44,54 @@ export function createControls() {
 	}
 
 	// Touch controls handler
+	let touchStartX = 0;
+	let touchStartY = 0;
+	let touchStartTime = 0;
+
 	function handleTouchStart(event: TouchEvent) {
 		const touch = event.touches[0];
-		const screenWidth = window.innerWidth;
-		const screenHeight = window.innerHeight;
-		const x = touch.clientX;
-		const y = touch.clientY;
-
-		// Divide screen into zones
-		if (x < screenWidth / 3) {
-			setControlState({ direction: "left", isMoving: true });
-		} else if (x > (screenWidth * 2) / 3) {
-			setControlState({ direction: "right", isMoving: true });
-		} else if (y < screenHeight / 2) {
-			setControlState({ direction: "up", isMoving: true });
-		} else {
-			setControlState({ direction: "down", isMoving: true });
-		}
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+		touchStartTime = Date.now();
 	}
 
-	function handleTouchEnd() {
-		// if (scheme === 'touch') {
-		//   setControlState({ direction: null, isMoving: false });
+	function handleTouchEnd(event: TouchEvent) {
+		const touch = event.changedTouches[0];
+		const touchEndX = touch.clientX;
+		const touchEndY = touch.clientY;
+		const touchEndTime = Date.now();
+
+		// Calculate swipe distance and time
+		const deltaX = touchEndX - touchStartX;
+		const deltaY = touchEndY - touchStartY;
+		const deltaTime = touchEndTime - touchStartTime;
+
+		// Minimum swipe distance and maximum swipe time
+		const minSwipeDistance = 50;
+		const maxSwipeTime = 300;
+
+		// Check if the touch event was a swipe
+		if (deltaTime <= maxSwipeTime) {
+			if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+				// Horizontal swipe
+				if (deltaX > 0) {
+					setControlState({ direction: "right", isMoving: true });
+				} else {
+					setControlState({ direction: "left", isMoving: true });
+				}
+			} else if (Math.abs(deltaY) > minSwipeDistance) {
+				// Vertical swipe
+				if (deltaY > 0) {
+					setControlState({ direction: "down", isMoving: true });
+				} else {
+					setControlState({ direction: "up", isMoving: true });
+				}
+			}
+		}
+
+		// Only reset control state if no swipe was detected
+		// if (Math.abs(deltaX) <= minSwipeDistance && Math.abs(deltaY) <= minSwipeDistance) {
+		// 	setControlState({ direction: null, isMoving: false });
 		// }
 	}
 
