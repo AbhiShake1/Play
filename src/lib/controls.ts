@@ -1,5 +1,4 @@
-import { createEffect, createSignal, onMount } from "solid-js";
-import { showToast } from "~/components/ui/toast";
+import { createSignal, onMount } from "solid-js";
 
 export type Direction = "left" | "right" | "up" | "down";
 interface ControlState {
@@ -23,10 +22,6 @@ export function createControls() {
 		direction: null,
 		isMoving: false,
 	});
-	
-	createEffect(() => {
-		showToast({title: JSON.stringify(controlState())})
-	}, [controlState])
 
 	// Keyboard controls handler
 	function handleKeyDown(event: KeyboardEvent) {
@@ -49,12 +44,14 @@ export function createControls() {
 	let touchStartX = 0;
 	let touchStartY = 0;
 	let touchStartTime = 0;
+	let isSwipeActive = false;
 
 	function handleTouchStart(event: TouchEvent) {
 		const touch = event.touches[0];
 		touchStartX = touch.clientX;
 		touchStartY = touch.clientY;
 		touchStartTime = Date.now();
+		isSwipeActive = false;
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
@@ -79,6 +76,7 @@ export function createControls() {
 				Math.abs(deltaX) > minSwipeDistance
 			) {
 				// Horizontal swipe
+				isSwipeActive = true;
 				if (deltaX > 0) {
 					setControlState({ direction: "right", isMoving: true });
 				} else {
@@ -86,6 +84,7 @@ export function createControls() {
 				}
 			} else if (Math.abs(deltaY) > minSwipeDistance) {
 				// Vertical swipe
+				isSwipeActive = true;
 				if (deltaY > 0) {
 					setControlState({ direction: "down", isMoving: true });
 				} else {
@@ -94,38 +93,39 @@ export function createControls() {
 			}
 		}
 
-		// Only reset control state if no swipe was detected
-		// if (Math.abs(deltaX) <= minSwipeDistance && Math.abs(deltaY) <= minSwipeDistance) {
-		// 	setControlState({ direction: null, isMoving: false });
-		// }
+		// Reset control state and swipe flag after a delay
+		setTimeout(() => {
+			isSwipeActive = false;
+			setControlState({ direction: null, isMoving: false });
+		}, 200);
 	}
 
 	// Gyroscope controls
-	// let gyroscopeAvailable = false;
+	let gyroscopeAvailable = false;
 
-	function handleDeviceOrientation(_event: DeviceOrientationEvent) {
-		// if (!gyroscopeAvailable) return;
+	function handleDeviceOrientation(event: DeviceOrientationEvent) {
+		if (!gyroscopeAvailable || isSwipeActive) return;
 
-		// const beta = event.beta; // Front/back tilt [-180, 180]
-		// const gamma = event.gamma; // Left/right tilt [-90, 90]
+		const beta = event.beta; // Front/back tilt [-180, 180]
+		const gamma = event.gamma; // Left/right tilt [-90, 90]
 
-		// if (beta === null || gamma === null) return;
+		if (beta === null || gamma === null) return;
 
-		// const tiltThreshold = 10;
+		const tiltThreshold = 10;
 
-		// if (Math.abs(gamma) > Math.abs(beta)) {
-		// 	if (gamma < -tiltThreshold) {
-		// 		setControlState({ direction: "left", isMoving: true });
-		// 	} else if (gamma > tiltThreshold) {
-		// 		setControlState({ direction: "right", isMoving: true });
-		// 	}
-		// } else {
-		// 	if (beta < -tiltThreshold) {
-		// 		setControlState({ direction: "up", isMoving: true });
-		// 	} else if (beta > tiltThreshold) {
-		// 		setControlState({ direction: "down", isMoving: true });
-		// 	}
-		// }
+		if (Math.abs(gamma) > Math.abs(beta)) {
+			if (gamma < -tiltThreshold) {
+				setControlState({ direction: "left", isMoving: true });
+			} else if (gamma > tiltThreshold) {
+				setControlState({ direction: "right", isMoving: true });
+			}
+		} else {
+			if (beta < -tiltThreshold) {
+				setControlState({ direction: "up", isMoving: true });
+			} else if (beta > tiltThreshold) {
+				setControlState({ direction: "down", isMoving: true });
+			}
+		}
 	}
 
 	onMount(() => {
@@ -145,7 +145,7 @@ export function createControls() {
 				handleDeviceOrientation,
 				abortController,
 			);
-			// gyroscopeAvailable = true;
+			gyroscopeAvailable = true;
 		}
 
 		() => {
