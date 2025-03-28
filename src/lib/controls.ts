@@ -51,7 +51,6 @@ export function createControls() {
 		touchStartX = touch.clientX;
 		touchStartY = touch.clientY;
 		touchStartTime = Date.now();
-		isSwipeActive = false;
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
@@ -94,10 +93,10 @@ export function createControls() {
 		}
 
 		// Reset control state and swipe flag after a delay
-		setTimeout(() => {
-			isSwipeActive = false;
-			setControlState({ direction: null, isMoving: false });
-		}, 200);
+		// setTimeout(() => {
+		// 	isSwipeActive = false;
+		// 	setControlState({ direction: null, isMoving: false });
+		// }, 200);
 	}
 
 	// Gyroscope controls
