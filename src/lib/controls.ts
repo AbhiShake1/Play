@@ -1,4 +1,5 @@
 import { createSignal, onMount } from "solid-js";
+import { showToast } from "~/components/ui/toast";
 
 export type Direction = "left" | "right" | "up" | "down";
 interface ControlState {
@@ -26,18 +27,17 @@ export function createControls() {
 	// Keyboard controls handler
 	function handleKeyDown(event: KeyboardEvent) {
 		const direction = KEY_MAPPINGS[event.key as keyof typeof KEY_MAPPINGS];
-		if (direction) {
-			event.preventDefault();
-			event.stopPropagation();
-    }
 
 		if (direction) {
+			showToast({ title: "keydown", description: direction });
+			event.preventDefault();
 			setControlState({ direction, isMoving: true });
 		}
 	}
 
 	function handleKeyUp(event: KeyboardEvent) {
 		if (KEY_MAPPINGS[event.key as keyof typeof KEY_MAPPINGS]) {
+      showToast({ title: "keyup", description: event.key });
 			if (!controlState().isMoving)
 				setControlState({ direction: null, isMoving: false });
 		}
@@ -53,6 +53,7 @@ export function createControls() {
 		touchStartX = touch.clientX;
 		touchStartY = touch.clientY;
 		touchStartTime = Date.now();
+    showToast({ title: "touchstart", description: `${touchStartX}, ${touchStartY}` });
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
@@ -72,18 +73,25 @@ export function createControls() {
 
 		// Check if the touch event was a swipe
 		if (deltaTime <= maxSwipeTime) {
-			if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+			if (
+				Math.abs(deltaX) > Math.abs(deltaY) &&
+				Math.abs(deltaX) > minSwipeDistance
+			) {
 				// Horizontal swipe
 				if (deltaX > 0) {
+					showToast({ title: "swipe", description: "right" });
 					setControlState({ direction: "right", isMoving: true });
 				} else {
+					showToast({ title: "swipe", description: "left" });
 					setControlState({ direction: "left", isMoving: true });
 				}
 			} else if (Math.abs(deltaY) > minSwipeDistance) {
 				// Vertical swipe
 				if (deltaY > 0) {
+					showToast({ title: "swipe", description: "down" });
 					setControlState({ direction: "down", isMoving: true });
 				} else {
+					showToast({ title: "swipe", description: "up" });
 					setControlState({ direction: "up", isMoving: true });
 				}
 			}
@@ -124,7 +132,7 @@ export function createControls() {
 	}
 
 	onMount(() => {
-    const abortController = new AbortController();
+		const abortController = new AbortController();
 		// Set up keyboard listeners
 		window.addEventListener("keydown", handleKeyDown, abortController);
 		window.addEventListener("keyup", handleKeyUp, abortController);
@@ -135,13 +143,17 @@ export function createControls() {
 
 		// Check and set up gyroscope
 		if (window.DeviceOrientationEvent) {
-			window.addEventListener("deviceorientation", handleDeviceOrientation, abortController);
+			window.addEventListener(
+				"deviceorientation",
+				handleDeviceOrientation,
+				abortController,
+			);
 			gyroscopeAvailable = true;
 		}
-    
-    () => {
-      abortController.abort();
-    }
+
+		() => {
+			abortController.abort();
+		};
 	});
 
 	return [controlState, setControlState] as const;
