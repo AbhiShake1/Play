@@ -7,7 +7,6 @@ import {
 	FullscreenIcon,
 } from "~/components/ui/icons";
 import { GamePreview } from "~/components/ui/preview";
-import { createControls } from "~/lib/controls";
 import { games } from "~/lib/games";
 
 export const Route = createFileRoute("/")({
@@ -19,7 +18,6 @@ function App() {
 	const [searchQuery, setSearchQuery] = createSignal("");
 	const [controlTutorialOpen, setControlTutorialOpen] = createSignal(false);
 	const [isFullscreen, setIsFullscreen] = createSignal(false);
-	const controls = createControls();
 
 	const toggleFullscreen = () => {
 		if (!document.fullscreenElement) {
