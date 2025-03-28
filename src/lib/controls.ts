@@ -25,7 +25,7 @@ export function createControls() {
 	});
 	
 	createEffect(() => {
-		showToast({title: JSON.stringify(controlState)})
+		showToast({title: JSON.stringify(controlState())})
 	}, [controlState])
 
 	// Keyboard controls handler
