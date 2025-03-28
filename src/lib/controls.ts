@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 
 export type Direction = "left" | "right" | "up" | "down";
 interface ControlState {

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/demo/sentry/bad-event-handler")({
 
 function RouteComponent() {
 	return (
-		<div className="p-4">
+		<div class="p-4">
 			<button
 				type="button"
 				onClick={() => {
