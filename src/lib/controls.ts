@@ -1,4 +1,4 @@
-import { createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount } from "solid-js";
 import { showToast } from "~/components/ui/toast";
 
 export type Direction = "left" | "right" | "up" | "down";
@@ -23,13 +23,16 @@ export function createControls() {
 		direction: null,
 		isMoving: false,
 	});
+	
+	createEffect(() => {
+		showToast({title: JSON.stringify(controlState)})
+	}, [controlState])
 
 	// Keyboard controls handler
 	function handleKeyDown(event: KeyboardEvent) {
 		const direction = KEY_MAPPINGS[event.key as keyof typeof KEY_MAPPINGS];
 
 		if (direction) {
-			showToast({ title: "keydown", description: direction });
 			event.preventDefault();
 			setControlState({ direction, isMoving: true });
 		}
@@ -37,7 +40,6 @@ export function createControls() {
 
 	function handleKeyUp(event: KeyboardEvent) {
 		if (KEY_MAPPINGS[event.key as keyof typeof KEY_MAPPINGS]) {
-      showToast({ title: "keyup", description: event.key });
 			if (!controlState().isMoving)
 				setControlState({ direction: null, isMoving: false });
 		}
@@ -53,7 +55,6 @@ export function createControls() {
 		touchStartX = touch.clientX;
 		touchStartY = touch.clientY;
 		touchStartTime = Date.now();
-    showToast({ title: "touchstart", description: `${touchStartX}, ${touchStartY}` });
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
@@ -79,19 +80,15 @@ export function createControls() {
 			) {
 				// Horizontal swipe
 				if (deltaX > 0) {
-					showToast({ title: "swipe", description: "right" });
 					setControlState({ direction: "right", isMoving: true });
 				} else {
-					showToast({ title: "swipe", description: "left" });
 					setControlState({ direction: "left", isMoving: true });
 				}
 			} else if (Math.abs(deltaY) > minSwipeDistance) {
 				// Vertical swipe
 				if (deltaY > 0) {
-					showToast({ title: "swipe", description: "down" });
 					setControlState({ direction: "down", isMoving: true });
 				} else {
-					showToast({ title: "swipe", description: "up" });
 					setControlState({ direction: "up", isMoving: true });
 				}
 			}
