@@ -5,6 +5,7 @@ import {
 	onCleanup,
 	onMount,
 } from "solid-js";
+import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { GameOverDialog } from "../../components/ui/game-over-dialog";
 import { createControls } from "../../lib/controls";
@@ -225,9 +226,11 @@ function RouteComponent() {
 			<div class="mb-4 space-y-2 text-center">
 				<div class="text-2xl font-bold">Score: {score()}</div>
 				{isColliding() && (
-					<div class="text-red-500 animate-[bounce_0.5s_ease-in-out] font-bold">
-						CRASH!
-					</div>
+					<Button
+						onClick={startGame}
+					>
+						Restart Game
+					</Button>
 				)}
 			</div>
 			<div

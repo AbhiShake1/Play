@@ -31,17 +31,19 @@ export function GameOverDialog(props: GameOverDialogProps) {
 
   return (
     <Dialog
-      title={props.title || 'Game Over!'}
+      title={props.title ?? "Ready for Another Round?"}
       {...props}
     >
       <div class="space-y-6">
         <div class="text-center">
           <p class="text-2xl font-bold mb-2">{props.scoreLabel || 'Score'}: {props.score}</p>
-          <p class="text-gray-400">{props.message || 'Better luck next time!'}</p>
+          <p class="text-gray-400">{props.message || 'You can do better! Give it another shot!'}</p>
         </div>
         
         <div class="flex justify-center gap-4">
-          <Button onClick={props.onRestart}>Play Again</Button>
+          <Button class="bg-primary hover:bg-primary/90 text-white px-6 py-3 text-lg font-bold" onClick={props.onRestart}>
+            🔥 Play Again 🔥
+          </Button>
           {props.downloadEnabled && (
             <Button variant="outline" onClick={downloadSnapshot}>
               Download Score
