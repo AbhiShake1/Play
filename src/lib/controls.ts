@@ -101,31 +101,31 @@ export function createControls() {
 	}
 
 	// Gyroscope controls
-	let gyroscopeAvailable = false;
+	// let gyroscopeAvailable = false;
 
-	function handleDeviceOrientation(event: DeviceOrientationEvent) {
-		if (!gyroscopeAvailable) return;
+	function handleDeviceOrientation(_event: DeviceOrientationEvent) {
+		// if (!gyroscopeAvailable) return;
 
-		const beta = event.beta; // Front/back tilt [-180, 180]
-		const gamma = event.gamma; // Left/right tilt [-90, 90]
+		// const beta = event.beta; // Front/back tilt [-180, 180]
+		// const gamma = event.gamma; // Left/right tilt [-90, 90]
 
-		if (beta === null || gamma === null) return;
+		// if (beta === null || gamma === null) return;
 
-		const tiltThreshold = 10;
+		// const tiltThreshold = 10;
 
-		if (Math.abs(gamma) > Math.abs(beta)) {
-			if (gamma < -tiltThreshold) {
-				setControlState({ direction: "left", isMoving: true });
-			} else if (gamma > tiltThreshold) {
-				setControlState({ direction: "right", isMoving: true });
-			}
-		} else {
-			if (beta < -tiltThreshold) {
-				setControlState({ direction: "up", isMoving: true });
-			} else if (beta > tiltThreshold) {
-				setControlState({ direction: "down", isMoving: true });
-			}
-		}
+		// if (Math.abs(gamma) > Math.abs(beta)) {
+		// 	if (gamma < -tiltThreshold) {
+		// 		setControlState({ direction: "left", isMoving: true });
+		// 	} else if (gamma > tiltThreshold) {
+		// 		setControlState({ direction: "right", isMoving: true });
+		// 	}
+		// } else {
+		// 	if (beta < -tiltThreshold) {
+		// 		setControlState({ direction: "up", isMoving: true });
+		// 	} else if (beta > tiltThreshold) {
+		// 		setControlState({ direction: "down", isMoving: true });
+		// 	}
+		// }
 	}
 
 	onMount(() => {
@@ -145,7 +145,7 @@ export function createControls() {
 				handleDeviceOrientation,
 				abortController,
 			);
-			gyroscopeAvailable = true;
+			// gyroscopeAvailable = true;
 		}
 
 		() => {
