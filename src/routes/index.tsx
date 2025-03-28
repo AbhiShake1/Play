@@ -1,10 +1,8 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount } from "solid-js";
-import { SplashCursor } from "~/components/SplashCursor";
 import { Button } from "~/components/ui/button";
 import { ControlTutorial } from "~/components/ui/control-tutorial";
 import {
-	ControlsIcon,
 	ExitFullscreenIcon,
 	FullscreenIcon,
 } from "~/components/ui/icons";
@@ -140,7 +138,7 @@ function App() {
 						))}
 				</div>
 			</div>
-			<SplashCursor />
+			{/* <SplashCursor /> */}
 			<ControlTutorial
 				isOpen={controlTutorialOpen()}
 				onClose={() => setControlTutorialOpen(false)}
